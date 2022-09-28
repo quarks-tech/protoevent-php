@@ -1,0 +1,27 @@
+{
+  "name": "quarks/protoevent-php",
+  "version": "dev-master",
+  "autoload": {
+    "psr-4": {
+      "Quarks\\EventBus\\": "src/EventBus",
+      "Example\\": "demo/gen/Example"
+    },
+    "classmap": [
+      "demo/gen/GPBMetadata"
+    ]
+  },
+  "require": {
+    "ext-pcntl": "*",
+    "php": ">=7.4",
+    "ramsey/uuid": "^4.5",
+    "cloudevents/sdk-php": "^1.0",
+    "google/protobuf": "^3.21",
+    "psr/log": "^3.0"
+  },
+  "suggest": {
+    "symfony/event-dispatcher-contracts": "*"
+  },
+  "require-dev": {
+    "vimeo/psalm": "^4.27"
+  }
+}
