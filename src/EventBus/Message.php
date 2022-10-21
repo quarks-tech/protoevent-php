@@ -23,7 +23,7 @@ class Message
         return $this->markers;
     }
 
-    public function getMarker(string $name): string
+    public function getMarker(string $name)
     {
         return $this->markers[$name] ?? '';
     }
