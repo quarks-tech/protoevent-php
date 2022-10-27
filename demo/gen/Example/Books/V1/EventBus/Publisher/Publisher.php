@@ -2,42 +2,28 @@
 
 namespace Example\Books\V1\EventBus\Publisher;
 
-use Example\Books\V1\BookCreatedEvent;
-use Example\Books\V1\BookDeletedEvent;
-use Example\Books\V1\BookUpdatedEvent;
-use Quarks\EventBus\Exception\PublisherException;
-use Quarks\EventBus\Publisher as BasePublisher;
-
-class Publisher implements BookCreatedEventPublisherInterface, BookDeletedEventPublisherInterface, BookUpdatedEventPublisherInterface
+class Publisher implements BookCreatedEventPublisherInterface, BookUpdatedEventPublisherInterface, BookDeletedEventPublisherInterface
 {
-    private BasePublisher $publisher;
+    public \Quarks\EventBus\Publisher $publisher;
 
-    public function __construct(BasePublisher $publisher)
+    public function __construct(\Quarks\EventBus\Publisher $publisher)
     {
         $this->publisher = $publisher;
     }
 
-    /**
-     * @throws PublisherException
-     */
-    public function publishBookCreatedEvent(BookCreatedEvent $event, array $options = [])
+    public function publishBookCreatedEvent(\Example\Books\V1\BookCreatedEvent $event, array $options = [])
     {
         $this->publisher->publish($event, 'example.books.v1.BookCreated', $options);
     }
 
-    /**
-     * @throws PublisherException
-     */
-    public function publishBookDeletedEvent(BookDeletedEvent $event, array $options = [])
-    {
-        $this->publisher->publish($event, 'example.books.v1.BookDeleted', $options);
-    }
-
-    /**
-     * @throws PublisherException
-     */
-    public function publishBookUpdatedEvent(BookUpdatedEvent $event, array $options = [])
+    public function publishBookUpdatedEvent(\Example\Books\V1\BookUpdatedEvent $event, array $options = [])
     {
         $this->publisher->publish($event, 'example.books.v1.BookUpdated', $options);
     }
+
+    public function publishBookDeletedEvent(\Example\Books\V1\BookDeletedEvent $event, array $options = [])
+    {
+        $this->publisher->publish($event, 'example.books.v1.BookDeleted', $options);
+    }
 }
+

@@ -2,3 +2,6 @@ version: v1
 plugins:
   - name: php
     out: gen
+  - name: php-eventbus
+    path: ../dist/protoc-gen-php-eventbus.phar
+    out: gen

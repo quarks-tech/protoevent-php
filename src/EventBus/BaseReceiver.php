@@ -4,6 +4,7 @@ namespace Quarks\EventBus;
 
 use Google\Protobuf\Internal\Message;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Quarks\EventBus\Descriptor\EventDescriptor;
 use Quarks\EventBus\Dispatcher\Dispatcher;
 use Quarks\EventBus\Encoding\DecoderInterface;
@@ -24,6 +25,7 @@ abstract class BaseReceiver
     {
         $this->decoder = $decoder;
         $this->dispatcher = $dispatcher;
+        $this->logger = new NullLogger();
     }
 
     public function register(EventDescriptor $eventDescriptor): void
