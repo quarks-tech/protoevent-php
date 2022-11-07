@@ -165,18 +165,22 @@ class ClassesGenerator
         );
     }
 
-    private function generateServiceDescriptorEventsMapItems(Collection $descriptors, string $package, string $namespace): string
+    private function generateServiceDescriptorEventsMapItems(Collection $messages, string $package, string $namespace): string
     {
         $format = "\t'%s' => new EventDescriptor('%s.%s', \\%s::class),\n";
         $result = '';
 
-        foreach ($descriptors as $descriptor) {
+        foreach ($messages as $message) {
+            if (!$this->isAppropriate($message)) {
+                continue;
+            }
+
             $result .= sprintf(
                 $format,
-                $descriptor->getName(),
+                $message->getName(),
                 $package,
-                $this->removeEventPostfix($descriptor->getName()),
-                $namespace .'\\' . $descriptor->getName()
+                $this->removeEventPostfix($message->getName()),
+                $namespace .'\\' . $message->getName()
             );
         }
 
