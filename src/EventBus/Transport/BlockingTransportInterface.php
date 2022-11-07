@@ -2,7 +2,7 @@
 
 namespace Quarks\EventBus\Transport;
 
-interface BlockingTransportInterface
+interface BlockingTransportInterface extends PublisherInterface, TransportWithSetupInterface, SetupInterface
 {
     public function fetch(callable $fetcher);
 }

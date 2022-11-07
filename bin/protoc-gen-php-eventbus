@@ -1,0 +1,57 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+use google\protobuf\compiler\CodeGeneratorRequest;
+use Protobuf\Configuration;
+use Protobuf\Stream;
+use Quarks\ClassesGenerator;
+
+try {
+    $configuration = Configuration::getInstance();
+
+    $request = CodeGeneratorRequest::fromStream(getStdinStream(), $configuration);
+
+    $generator = new ClassesGenerator();
+    $response = $generator->generate($request);
+
+    writeStream($response->toStream($configuration));
+} catch (\Exception $e) {
+    echo 'Failed to generate classes for protoevents-php: ['.get_class($e).'] '.$e->getMessage().' at '.$e->getFile().':'.$e->getLine().PHP_EOL;
+
+    exit(1);
+}
+
+function writeStream(Stream $stream)
+{
+    fwrite(STDOUT, $stream);
+}
+
+function getStdinStream(): Stream
+{
+    $handle  = fopen('php://stdin', 'r');
+    $stream  = Stream::create();
+    $counter = 0;
+
+    stream_set_blocking($handle, false);
+
+    while (! feof($handle) && ($counter++ < 10)) {
+        $buffer = fread($handle, 1024);
+        $length = mb_strlen($buffer, '8bit');
+
+        if ($length > 0) {
+            $stream->write($buffer, $length);
+            $counter = 0;
+
+            continue;
+        }
+
+        usleep(1000);
+    }
+
+    $stream->seek(0);
+    fclose($handle);
+
+    return $stream;
+}

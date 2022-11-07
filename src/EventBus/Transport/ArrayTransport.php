@@ -8,11 +8,9 @@ class ArrayTransport implements TransportInterface
 {
     private array $events = [];
 
-    public function publish(string $eventName, $body, array $options = [])
+    public function publish(string $eventName, $body, array $options = []): void
     {
         $this->events[] = $body;
-
-        return true;
     }
 
     public function get(): iterable
@@ -32,7 +30,7 @@ class ArrayTransport implements TransportInterface
         unset($this->events[$message->getMarker('message_id')]);
     }
 
-    public function setup(): void
+    public function setup(array $registeredEvents): void
     {
     }
 }
