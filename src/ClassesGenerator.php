@@ -33,13 +33,11 @@ class ClassesGenerator
         foreach ($request->getProtoFileList() as $protoFile) {
             /** @var $protoFile FileDescriptorProto */
 
-            if ($protoFile->getMessageTypeList()?->count() == 0) {
+            if (sizeof($events = $this->findEvents($protoFile)) == 0) {
                 continue;
             }
 
-            $phpNamespace = $this->findPhpNamespaceOption($protoFile);
-
-            if (!$phpNamespace) {
+            if (empty($phpNamespace = $this->findPhpNamespaceOption($protoFile))) {
                 continue;
             }
 
@@ -47,27 +45,23 @@ class ClassesGenerator
             $publisher = $this->createPublisher($protoFile);
             $receiver = $this->createReceiver($protoFile);
 
-            foreach ($protoFile->getMessageTypeList() as $message) {
-                /** @var $message DescriptorProto */
+            foreach ($events as $event) {
+                /** @var $event DescriptorProto */
 
-                if (!$this->isAppropriate($message)) {
-                    continue;
-                }
-
-                $publisherInterface = $this->createPublisherInterface($message, $phpNamespace);
+                $publisherInterface = $this->createPublisherInterface($event, $phpNamespace);
 
                 $publisher->setImplementedInterfaces(array_merge(
                     $publisher->getImplementedInterfaces(),
-                    [$phpNamespace . '\\EventBus\\Publisher\\' . $message->getName() . 'PublisherInterface'],
+                    [$phpNamespace . '\\EventBus\\Publisher\\' . $event->getName() . 'PublisherInterface'],
                 ));
 
-                $response->addFile($this->createFile([$publisherInterface], $phpNamespace, '/EventBus/Publisher/' . $message->getName() . 'PublisherInterface.php'));
+                $response->addFile($this->createFile([$publisherInterface], $phpNamespace, '/EventBus/Publisher/' . $event->getName() . 'PublisherInterface.php'));
 
-                $receiverInterface = $this->createReceiverInterface($message, $phpNamespace);
-                $response->addFile($this->createFile([$receiverInterface], $phpNamespace, '/EventBus/Receiver/' . $message->getName() . 'HandlerInterface.php'));
+                $receiverInterface = $this->createReceiverInterface($event, $phpNamespace);
+                $response->addFile($this->createFile([$receiverInterface], $phpNamespace, '/EventBus/Receiver/' . $event->getName() . 'HandlerInterface.php'));
 
-                $this->addEventToPublisher($publisher, $message, $protoFile);
-                $this->addHandlerToReceiver($receiver, $message, $protoFile);
+                $this->addEventToPublisher($publisher, $event, $protoFile);
+                $this->addHandlerToReceiver($receiver, $event, $protoFile);
             }
 
             $response->addFile($this->createFile([$receiver], $phpNamespace, '/EventBus/Receiver/Receiver.php'));
@@ -355,6 +349,19 @@ return \$this->events[\$eventName];",
         $file->setContent(FileGenerator::fromArray(['classes' => $classes])->generate());
 
         return $file;
+    }
+
+    private function findEvents(FileDescriptorProto $protoFile): array
+    {
+        $events = [];
+
+        foreach ($protoFile->getMessageTypeList() ?? [] as $message) {
+            if ($this->isAppropriate($message)) {
+                $events[] = $message;
+            }
+        }
+
+        return $events;
     }
 
     private function isAppropriate(DescriptorProto $message): bool
