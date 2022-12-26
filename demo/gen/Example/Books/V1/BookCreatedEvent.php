@@ -9,8 +9,6 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *  option (quarks_tech.protoevent.v1.enabled) = true;
- *
  * Generated from protobuf message <code>example.books.v1.BookCreatedEvent</code>
  */
 class BookCreatedEvent extends \Google\Protobuf\Internal\Message
@@ -30,7 +28,7 @@ class BookCreatedEvent extends \Google\Protobuf\Internal\Message
      * }
      */
     public function __construct($data = NULL) {
-        \GPBMetadata\Books::initOnce();
+        \Example\Books\V1\GPBMetadata\Books::initOnce();
         parent::__construct($data);
     }
 
