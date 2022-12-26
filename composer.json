@@ -1,6 +1,6 @@
 {
   "name": "quarks/protoevent-php",
-  "version": "dev-master",
+  "version": "0.0.1",
   "autoload": {
     "psr-4": {
       "Quarks\\EventBus\\": "src/EventBus",
