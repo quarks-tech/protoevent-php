@@ -11,7 +11,7 @@ use Ramsey\Uuid\Uuid;
 
 class Publisher
 {
-    private const CLOUD_EVENTS_CONTENT_TYPE = 'application/cloudevents';
+    private const CLOUD_EVENTS_CONTENT_TYPE = 'application/cloudevents+json';
 
     private TransportInterface $transport;
     private EncoderInterface $encoder;
@@ -32,12 +32,12 @@ class Publisher
                 Uuid::uuid4()->toString(),
                 'protoevent-php',
                 $eventName,
-                $event->serializeToJsonString()
+                $event->serializeToJsonString(),
+                self::CLOUD_EVENTS_CONTENT_TYPE,
+                null,
+                null,
+                date_create_immutable()
             );
-
-            $cloudEvent
-                ->withDataContentType(self::CLOUD_EVENTS_CONTENT_TYPE)
-                ->withTime(date_create_immutable());
 
             $this->transport->publish($eventName, $this->encoder->encode($cloudEvent));
         } catch (\Exception $exception) {
