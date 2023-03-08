@@ -2,15 +2,15 @@
 
 namespace Quarks\EventBus\Encoding;
 
-use CloudEvents\V1\CloudEventInterface;
+use Quarks\EventBus\CloudEvent;
 use Quarks\EventBus\Exception\MessageEncodingFailedException;
 
 interface EncoderInterface
 {
     /**
-     * @param CloudEventInterface $event
+     * @param CloudEvent $event
      * @return mixed
      * @throws MessageEncodingFailedException
      */
-    public function encode(CloudEventInterface $event);
+    public function encode(CloudEvent $event);
 }

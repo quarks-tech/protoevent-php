@@ -2,36 +2,54 @@
 
 namespace Quarks\EventBus\Encoding;
 
-use CloudEvents\CloudEventInterface;
-use CloudEvents\Serializers\JsonDeserializer;
-use CloudEvents\Serializers\JsonSerializer;
+use Quarks\EventBus\CloudEvent;
 use Quarks\EventBus\Exception\MessageDecodingFailedException;
 use Quarks\EventBus\Exception\MessageEncodingFailedException;
 
 class ProtoJsonEncoder implements EncoderInterface, DecoderInterface
 {
-    private JsonSerializer $serializer;
-    private JsonDeserializer $deserializer;
+    private const TIME_ZONE = 'UTC';
 
-    public function __construct()
+    public function encode(CloudEvent $event)
     {
-        $this->serializer = JsonSerializer::create();
-        $this->deserializer = JsonDeserializer::create();
-    }
+        $plain = [
+            'source' => $event->getSource(),
+            'data' => $event->getData(),
+            'datacontenttype' => $event->getDataContentType(),
+            'time' => $event->getTime()->format(\DateTimeImmutable::RFC3339),
+            'specversion' => $event->getSpecVersion(),
+            'id' => $event->getId(),
+            'type' => $event->getType(),
+        ];
 
-    public function encode(CloudEventInterface $event)
-    {
         try {
-            return $this->serializer->serializeStructured($event);
+            return json_encode($plain, JSON_THROW_ON_ERROR);
         } catch (\Exception $exception) {
             throw new MessageEncodingFailedException('', 0, $exception);
         }
     }
 
-    public function decode($encoded): CloudEventInterface
+    public function decode($encoded): CloudEvent
     {
         try {
-            return $this->deserializer->deserializeStructured($encoded);
+            $decoded = json_decode($encoded, true, 512, JSON_THROW_ON_ERROR);
+
+            if (!is_array($decoded)) {
+                throw new MessageDecodingFailedException();
+            }
+
+            return new CloudEvent(
+                $decoded['id'],
+                $decoded['source'],
+                $decoded['type'],
+                $decoded['data'],
+                $decoded['datacontenttype'],
+                \DateTimeImmutable::createFromFormat(
+                    \DateTimeImmutable::RFC3339,
+                    $decoded['time'],
+                    new \DateTimeZone(self::TIME_ZONE),
+                )
+            );
         } catch (\Exception $exception) {
             throw new MessageDecodingFailedException('', 0, $exception);
         }

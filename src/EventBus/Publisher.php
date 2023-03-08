@@ -2,7 +2,6 @@
 
 namespace Quarks\EventBus;
 
-use CloudEvents\V1\CloudEventImmutable;
 use Google\Protobuf\Internal\Message;
 use Quarks\EventBus\Encoding\EncoderInterface;
 use Quarks\EventBus\Exception\PublisherException;
@@ -28,15 +27,13 @@ class Publisher
     public function publish(Message $event, string $eventName, array $options = []): void
     {
         try {
-            $cloudEvent = new CloudEventImmutable(
+            $cloudEvent = new CloudEvent(
                 Uuid::uuid4()->toString(),
                 'protoevent-php',
                 $eventName,
                 $event->serializeToJsonString(),
                 self::CLOUD_EVENTS_CONTENT_TYPE,
-                null,
-                null,
-                date_create_immutable()
+                date_create_immutable('now', new \DateTimeZone('UTC')),
             );
 
             $this->transport->publish($eventName, $this->encoder->encode($cloudEvent));

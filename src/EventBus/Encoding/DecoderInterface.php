@@ -2,15 +2,15 @@
 
 namespace Quarks\EventBus\Encoding;
 
-use CloudEvents\CloudEventInterface;
+use Quarks\EventBus\CloudEvent;
 use Quarks\EventBus\Exception\MessageDecodingFailedException;
 
 interface DecoderInterface
 {
     /**
      * @param $encoded
-     * @return CloudEventInterface
+     * @return CloudEvent
      * @throws MessageDecodingFailedException
      */
-    public function decode($encoded): CloudEventInterface;
+    public function decode($encoded): CloudEvent;
 }
