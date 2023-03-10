@@ -2,6 +2,7 @@
 
 namespace Quarks\EventBus;
 
+use Google\ApiCore\Serializer;
 use Google\Protobuf\Internal\Message;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -15,6 +16,7 @@ abstract class BaseReceiver
 {
     protected DecoderInterface $decoder;
     protected Dispatcher $dispatcher;
+    protected Serializer $serializer;
     protected LoggerInterface $logger;
 
     protected array $registeredEvents = [];
@@ -25,6 +27,7 @@ abstract class BaseReceiver
     {
         $this->decoder = $decoder;
         $this->dispatcher = $dispatcher;
+        $this->serializer = new Serializer();
         $this->logger = new NullLogger();
     }
 
@@ -73,7 +76,7 @@ abstract class BaseReceiver
                 throw new InvalidEventBodyException($eventClass);
             }
 
-            $event->mergeFromJsonString($cloudEvent->getData());
+            $this->serializer->decodeMessage($eventClass, $cloudEvent->getData());
 
             $this->dispatcher->dispatch($event, $eventName);
         } catch (\Exception $e) {

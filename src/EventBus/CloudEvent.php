@@ -9,7 +9,7 @@ class CloudEvent
     private string $id;
     private string $source;
     private string $type;
-    private string $data;
+    private array $data;
     private string $dataContentType;
     private \DateTimeImmutable $time;
 
@@ -17,7 +17,7 @@ class CloudEvent
         string $id,
         string $source,
         string $type,
-        string $data,
+        array $data,
         ?string $dataContentType = null,
         ?\DateTimeImmutable $time = null,
     ) {
@@ -49,7 +49,7 @@ class CloudEvent
         return $this->type;
     }
 
-    public function getData(): string
+    public function getData(): array
     {
         return $this->data;
     }

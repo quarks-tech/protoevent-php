@@ -23,7 +23,7 @@ class ProtoJsonEncoder implements EncoderInterface, DecoderInterface
         ];
 
         try {
-            return json_encode($plain, JSON_THROW_ON_ERROR);
+            return json_encode($plain, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
         } catch (\Exception $exception) {
             throw new MessageEncodingFailedException('', 0, $exception);
         }

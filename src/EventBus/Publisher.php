@@ -2,6 +2,7 @@
 
 namespace Quarks\EventBus;
 
+use Google\ApiCore\Serializer;
 use Google\Protobuf\Internal\Message;
 use Quarks\EventBus\Encoding\EncoderInterface;
 use Quarks\EventBus\Exception\PublisherException;
@@ -31,7 +32,7 @@ class Publisher
                 Uuid::uuid4()->toString(),
                 'protoevent-php',
                 $eventName,
-                $event->serializeToJsonString(),
+                Serializer::serializeToPhpArray($event),
                 self::CLOUD_EVENTS_CONTENT_TYPE,
                 date_create_immutable('now', new \DateTimeZone('UTC')),
             );
