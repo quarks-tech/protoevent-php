@@ -3,7 +3,6 @@
 namespace Quarks\EventBus;
 
 use Quarks\EventBus\Dispatcher\Dispatcher;
-use Quarks\EventBus\Encoding\DecoderInterface;
 use Quarks\EventBus\Exception\MessageDecodingFailedException;
 use Quarks\EventBus\Exception\ReceiverException;
 use Quarks\EventBus\Transport\TransportInterface;
@@ -14,11 +13,11 @@ class Receiver extends BaseReceiver
 
     private TransportInterface $transport;
 
-    public function __construct(TransportInterface $transport, DecoderInterface $decoder, Dispatcher $dispatcher)
+    public function __construct(TransportInterface $transport, Dispatcher $dispatcher)
     {
         $this->transport = $transport;
 
-        parent::__construct($decoder, $dispatcher);
+        parent::__construct($dispatcher);
     }
 
     public function run(): void
@@ -27,7 +26,7 @@ class Receiver extends BaseReceiver
             $this->setupTransport();
         }
 
-        while (false === $this->shouldStop) {
+        do {
             $messageReceived = false;
 
             foreach ($this->transport->get() as $message) {
@@ -58,7 +57,14 @@ class Receiver extends BaseReceiver
             if (false === $messageReceived) {
                 usleep(self::SLEEP);
             }
-        }
+        }  while (false === $this->shouldStop);
+    }
+
+    public function runAndStop(): void
+    {
+        $this->shouldStop = true;
+        $this->run();
+        $this->shouldStop = false;
     }
 
     private function setupTransport(): void

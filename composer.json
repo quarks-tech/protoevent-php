@@ -1,6 +1,6 @@
 {
   "name": "quarks-tech/protoevent-php",
-  "version": "1.0.5",
+  "version": "0.0.1",
   "license": "BSD-3-Clause",
   "autoload": {
     "psr-4": {
@@ -17,8 +17,17 @@
     "psr/log": "^1|^2|^3",
     "protobuf-php/google-protobuf-proto": "^0.1.3",
     "protobuf-php/protobuf": "^0.1.3",
-    "google/gax": "^1.19"
+    "quarks-tech/protoevent-amqp-php": "dev-master"
   },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "/home/ronder/PhpstormProjects/protoevent-amqp-php",
+      "options": {
+        "symlink": true
+      }
+    }
+  ],
   "suggest": {
     "symfony/event-dispatcher-contracts": "*"
   },

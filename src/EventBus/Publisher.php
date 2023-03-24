@@ -2,24 +2,17 @@
 
 namespace Quarks\EventBus;
 
-use Google\ApiCore\Serializer;
 use Google\Protobuf\Internal\Message;
-use Quarks\EventBus\Encoding\EncoderInterface;
 use Quarks\EventBus\Exception\PublisherException;
 use Quarks\EventBus\Transport\TransportInterface;
 use Ramsey\Uuid\Uuid;
 
 class Publisher
 {
-    private const CLOUD_EVENTS_CONTENT_TYPE = 'application/cloudevents+json';
-
     private TransportInterface $transport;
-    private EncoderInterface $encoder;
-
-    public function __construct(TransportInterface $transport, EncoderInterface $encoder)
+    public function __construct(TransportInterface $transport)
     {
         $this->transport = $transport;
-        $this->encoder = $encoder;
     }
 
     /**
@@ -28,18 +21,26 @@ class Publisher
     public function publish(Message $event, string $eventName, array $options = []): void
     {
         try {
-            $cloudEvent = new CloudEvent(
-                Uuid::uuid4()->toString(),
-                'protoevent-php',
+            $metadata = new Metadata(
+                '1.0',
                 $eventName,
-                Serializer::serializeToPhpArray($event),
-                self::CLOUD_EVENTS_CONTENT_TYPE,
-                date_create_immutable('now', new \DateTimeZone('UTC')),
+                $options['source'] ?? 'protoevent-php',
+                $options['id'] ?? Uuid::uuid4()->toString(),
+                $options['time'] ?? date(\DateTimeInterface::RFC3339)
+            );
+            $metadata->setDataContentType(
+                $options['dataContentType'] ?? 'application/cloudevents+json'
             );
 
-            $this->transport->publish($eventName, $this->encoder->encode($cloudEvent));
+            $this->transport->publish(
+                new Envelope(
+                    $metadata,
+                    CodecsHelper::encodeWithCodec($event, ContentTypeHelper::extractSubType($metadata->getDataContentType()))
+                )
+            );
         } catch (\Exception $exception) {
             throw new PublisherException('', 0, $exception);
         }
     }
+
 }

@@ -4,12 +4,14 @@ namespace Quarks\EventBus;
 
 class CloudEvent
 {
-    private const SPEC_VERSION = '1.0';
+    public const SPEC_VERSION = '1.0';
+
+    public const JSON_CONTENT_TYPE = 'application/cloudevents+json';
 
     private string $id;
     private string $source;
     private string $type;
-    private array $data;
+    private mixed $data;
     private string $dataContentType;
     private \DateTimeImmutable $time;
 
@@ -17,7 +19,7 @@ class CloudEvent
         string $id,
         string $source,
         string $type,
-        array $data,
+        mixed $data,
         ?string $dataContentType = null,
         ?\DateTimeImmutable $time = null,
     ) {
@@ -49,7 +51,7 @@ class CloudEvent
         return $this->type;
     }
 
-    public function getData(): array
+    public function getData(): mixed
     {
         return $this->data;
     }
