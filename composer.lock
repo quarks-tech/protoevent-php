@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86625aa2cb5352164ac3156f6cf9745f",
+    "content-hash": "021a665305bdd425af9251458d2d5a05",
     "packages": [
         {
             "name": "brick/math",
@@ -278,33 +278,6 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.0"
             },
             "time": "2021-07-14T16:46:02+00:00"
-        },
-        {
-            "name": "quarks-tech/protoevent-amqp-php",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "/home/ronder/PhpstormProjects/protoevent-amqp-php",
-                "reference": "a16b1241b2240241a1cc420bab514c7c214e01ec"
-            },
-            "require": {
-                "ext-amqp": "*",
-                "php": "^7.4|^8.0",
-                "quarks-tech/protoevent-php": "^1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Quarks\\EventBus\\Transport\\": "src/"
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": false
-            }
         },
         {
             "name": "ramsey/collection",
@@ -4278,9 +4251,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "quarks-tech/protoevent-amqp-php": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
