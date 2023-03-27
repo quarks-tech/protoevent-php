@@ -2,32 +2,29 @@
 
 namespace Quarks\EventBus;
 
-use Google\ApiCore\Serializer;
 use Google\Protobuf\Internal\Message;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Quarks\EventBus\Descriptor\EventDescriptor;
 use Quarks\EventBus\Dispatcher\Dispatcher;
-use Quarks\EventBus\Encoding\DecoderInterface;
+use Quarks\EventBus\Encoding\Codecs\JsonCodec;
+use Quarks\EventBus\Encoding\Codecs\ProtoCodec;
 use Quarks\EventBus\Exception\InvalidEventBodyException;
 use Quarks\EventBus\Exception\ReceiverException;
+use Quarks\EventBus\Exception\UnsupportedContentType;
 
 abstract class BaseReceiver
 {
-    protected DecoderInterface $decoder;
     protected Dispatcher $dispatcher;
-    protected Serializer $serializer;
     protected LoggerInterface $logger;
 
     protected array $registeredEvents = [];
     protected bool $transportSetup = false;
     protected bool $shouldStop = false;
 
-    public function __construct(DecoderInterface $decoder, Dispatcher $dispatcher)
+    public function __construct(Dispatcher $dispatcher)
     {
-        $this->decoder = $decoder;
         $this->dispatcher = $dispatcher;
-        $this->serializer = new Serializer();
         $this->logger = new NullLogger();
     }
 
@@ -55,11 +52,10 @@ abstract class BaseReceiver
     /**
      * @throws ReceiverException
      */
-    protected function dispatchEvent(\Quarks\EventBus\Message $message): void
+    protected function dispatchEvent(Envelope $envelope): void
     {
         try {
-            $cloudEvent = $this->decoder->decode($message->getBody());
-            $eventName = $cloudEvent->getType();
+            $eventName = $envelope->getMetadata()->getType();
 
             // dispatch only events we subscribed
             if (empty($eventClass = $this->registeredEvents[$eventName] ?? null)) {
@@ -76,7 +72,11 @@ abstract class BaseReceiver
                 throw new InvalidEventBodyException($eventClass);
             }
 
-            $this->serializer->decodeMessage($eventClass, $cloudEvent->getData());
+            CodecsHelper::decodeWithCodec(
+                $event,
+                $envelope->getBody(),
+                ContentTypeHelper::extractSubType($envelope->getMetadata()->getDataContentType())
+            );
 
             $this->dispatcher->dispatch($event, $eventName);
         } catch (\Exception $e) {

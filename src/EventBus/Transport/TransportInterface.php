@@ -2,10 +2,10 @@
 
 namespace Quarks\EventBus\Transport;
 
-use Quarks\EventBus\Message;
+use Quarks\EventBus\Envelope;
 
 interface TransportInterface extends PublisherInterface, ConfirmableInterface, SetupInterface
 {
-    /** @return array<Message> */
+    /** @return iterable<Envelope> */
     public function get(): iterable;
 }

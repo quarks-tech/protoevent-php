@@ -26,7 +26,7 @@ class BlockingReceiver extends BaseReceiver
             $this->setupTransport();
         }
 
-        $this->transport->fetch(function (Message $message) {
+        $this->transport->fetch(function (Envelope $message) {
             try {
                 $this->dispatchEvent($message);
                 $this->transport->ack($message);

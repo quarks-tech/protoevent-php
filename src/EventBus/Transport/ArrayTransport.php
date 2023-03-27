@@ -2,32 +2,32 @@
 
 namespace Quarks\EventBus\Transport;
 
-use Quarks\EventBus\Message;
+use Quarks\EventBus\Envelope;
 
 class ArrayTransport implements TransportInterface
 {
     private array $events = [];
 
-    public function publish(string $eventName, $body, array $options = []): void
+    public function publish(Envelope $envelope, array $options = []): void
     {
-        $this->events[] = $body;
+        $this->events[$envelope->getMetadata()->getId()] = $envelope;
     }
 
     public function get(): iterable
     {
-        foreach ($this->events as $id => $message) {
-            yield new Message($message, ['message_id' => $id]);
+        foreach ($this->events as $event) {
+            yield $event;
         }
     }
 
-    public function ack(Message $message): void
+    public function ack(Envelope $envelope): void
     {
-        unset($this->events[$message->getMarker('message_id')]);
+        unset($this->events[$envelope->getMetadata()->getId()]);
     }
 
-    public function reject(Message $message, bool $requeue = false): void
+    public function reject(Envelope $envelope, bool $requeue = false): void
     {
-        unset($this->events[$message->getMarker('message_id')]);
+        unset($this->events[$envelope->getMetadata()->getId()]);
     }
 
     public function setup(array $registeredEvents): void
