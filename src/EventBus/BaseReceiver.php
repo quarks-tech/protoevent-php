@@ -80,7 +80,7 @@ abstract class BaseReceiver
 
             $this->dispatcher->dispatch($event, $eventName);
         } catch (\Exception $e) {
-            throw new ReceiverException('', 0, $e);
+            throw new ReceiverException($e->getMessage(), 0, $e);
         }
     }
 }
