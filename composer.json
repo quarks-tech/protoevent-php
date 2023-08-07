@@ -1,6 +1,6 @@
 {
   "name": "quarks-tech/protoevent-php",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "BSD-3-Clause",
   "autoload": {
     "psr-4": {
