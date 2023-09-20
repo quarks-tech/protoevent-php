@@ -13,8 +13,11 @@ class JsonCodec implements CodecInterface
         return $message->serializeToJsonString();
     }
 
+    /**
+     * Parses a json string to protobuf message, ignoring unknown fields.
+     */
     public static function unmarshal(Message $message, mixed $data)
     {
-        return $message->mergeFromJsonString($data);
+        return $message->mergeFromJsonString($data, true);
     }
 }
