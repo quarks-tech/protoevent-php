@@ -59,11 +59,12 @@ abstract class BaseReceiver
 
             // dispatch only events we subscribed
             if (empty($eventClass = $this->registeredEvents[$eventName] ?? null)) {
+                $this->logger->warning(sprintf('Such event is not registered, skipping. Event name: %s', $eventName));
                 return;
             }
 
             if (!class_exists($eventClass)) {
-                throw new \LogicException(sprintf("Class %s should be exists", $eventClass));
+                throw new \LogicException(sprintf('Class %s should be exists', $eventClass));
             }
 
             $event = new $eventClass;
@@ -82,7 +83,7 @@ abstract class BaseReceiver
         } catch (\Throwable $throwable) {
             throw new ReceiverException(
                 sprintf(
-                    "Unable to receive %s with body %s: %s", $eventName, $envelope->getBody(), $throwable->getMessage()
+                    'Unable to receive %s with body %s: %s', $eventName, $envelope->getBody(), $throwable->getMessage()
                 ),
                 0,
                 $throwable
