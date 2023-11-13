@@ -79,13 +79,13 @@ abstract class BaseReceiver
             );
 
             $this->dispatcher->dispatch($event, $eventName);
-        } catch (\Exception $e) {
+        } catch (\Throwable $throwable) {
             throw new ReceiverException(
                 sprintf(
-                    "Unable to receive %s with body %s: %s", $eventName, $envelope->getBody(), $e->getMessage()
+                    "Unable to receive %s with body %s: %s", $eventName, $envelope->getBody(), $throwable->getMessage()
                 ),
                 0,
-                $e
+                $throwable
             );
         }
     }

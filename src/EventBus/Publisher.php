@@ -38,8 +38,8 @@ class Publisher
                     CodecsHelper::encodeWithCodec($event, ContentTypeHelper::extractSubType($metadata->getDataContentType()))
                 )
             );
-        } catch (\Exception $exception) {
-            throw new PublisherException('', 0, $exception);
+        } catch (\Throwable $throwable) {
+            throw new PublisherException('', 0, $throwable);
         }
     }
 
