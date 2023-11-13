@@ -36,7 +36,7 @@ class BlockingReceiver extends BaseReceiver
 
                     return;
                 }
-            } catch (MessageDecodingFailedException $e) {
+            } catch (MessageDecodingFailedException) {
                 $this->logger->error('Unable to decode message from transport', [
                     'transport' => get_class($this->transport)
                 ]);
@@ -46,6 +46,10 @@ class BlockingReceiver extends BaseReceiver
                 $this->logger->error(sprintf("Unable to process event: %s", $e->getMessage()));
 
                 $this->transport->reject($message, true);
+            } catch (\Throwable $throwable) {
+                $this->logger->error(sprintf("Unable to process event: %s", $throwable->getMessage()));
+
+                $this->transport->reject($message);
             }
         });
     }
