@@ -60,7 +60,9 @@ abstract class BaseReceiver
             // dispatch only events we subscribed
             if (empty($eventClass = $this->registeredEvents[$eventName] ?? null)) {
                 $this->logger->warning(sprintf('Such event is not registered, skipping. Event name: %s', $eventName));
-                return;
+                throw new ReceiverException(
+                    sprintf('Unable to receive `%s` with body `%s`', $eventName, $envelope->getBody())
+                );
             }
 
             if (!class_exists($eventClass)) {
