@@ -4,7 +4,6 @@ namespace Quarks\EventBus;
 
 use Quarks\EventBus\Descriptor\EventDescriptor;
 use Quarks\EventBus\Dispatcher\Dispatcher;
-use Quarks\EventBus\Encoding\DecoderInterface;
 use Quarks\EventBus\Exception\MessageDecodingFailedException;
 use Quarks\EventBus\Exception\ReceiverException;
 use Quarks\EventBus\Transport\BlockingTransportInterface;
@@ -13,11 +12,11 @@ class BlockingReceiver extends BaseReceiver
 {
     private BlockingTransportInterface $transport;
 
-    public function __construct(BlockingTransportInterface $transport, DecoderInterface $decoder, Dispatcher $dispatcher)
+    public function __construct(BlockingTransportInterface $transport, Dispatcher $dispatcher)
     {
         $this->transport = $transport;
 
-        parent::__construct($decoder, $dispatcher);
+        parent::__construct($dispatcher);
     }
 
     public function run(): void
