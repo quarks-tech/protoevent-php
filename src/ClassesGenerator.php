@@ -300,7 +300,7 @@ return \$this->events[\$eventName];",
                 PropertyGenerator::fromArray([
                     'name' => 'receiver',
                     'omitdefaultvalue' => true,
-                    'type' => TypeGenerator::fromTypeString('Quarks\EventBus\Receiver'),
+                    'type' => TypeGenerator::fromTypeString('Quarks\EventBus\BaseReceiver'),
                     'visibility' => AbstractMemberGenerator::FLAG_PRIVATE,
                 ])
             )
@@ -330,7 +330,7 @@ return \$this->events[\$eventName];",
                     'parameters' => [
                         [
                             'name' => 'receiver',
-                            'type' => 'Quarks\EventBus\Receiver',
+                            'type' => 'Quarks\EventBus\BaseReceiver',
                         ],
                         [
                             'name' => 'dispatcher',

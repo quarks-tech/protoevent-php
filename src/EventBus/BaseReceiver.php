@@ -44,6 +44,8 @@ abstract class BaseReceiver
         return $this;
     }
 
+    abstract public function run(): void;
+
     public function stop(): void
     {
         $this->shouldStop = true;
