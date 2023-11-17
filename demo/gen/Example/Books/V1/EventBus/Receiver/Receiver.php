@@ -4,13 +4,13 @@ namespace Example\Books\V1\EventBus\Receiver;
 
 class Receiver
 {
-    public \Quarks\EventBus\Receiver $receiver;
+    public \Quarks\EventBus\BaseReceiver $receiver;
 
     public \Example\Books\V1\EventBus\ServiceDescriptor $serviceDescriptor;
 
     public \Quarks\EventBus\Dispatcher\Dispatcher $dispatcher;
 
-    public function __construct(\Quarks\EventBus\Receiver $receiver, \Quarks\EventBus\Dispatcher\Dispatcher $dispatcher)
+    public function __construct(\Quarks\EventBus\BaseReceiver $receiver, \Quarks\EventBus\Dispatcher\Dispatcher $dispatcher)
     {
         $this->receiver = $receiver;
         $this->serviceDescriptor = \Example\Books\V1\EventBus\ServiceDescriptor::create();
