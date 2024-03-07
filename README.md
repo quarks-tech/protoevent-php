@@ -42,27 +42,31 @@ Before running any commands, make sure to configure the following variables in t
 
 ## Installation
 
-1. **Start docker containers**: PHP 8.1 with RabbitMQ-management images
+1. **Install dependencies**:
+    ```bash
+    composer install --ignore-platform-reqs
+    ```
+
+2. **Start docker containers**: PHP 8.1 with RabbitMQ-management images
     ```bash
     docker-compose up -d
     ```
 
-2. **Setup demo exchange**: `example.books.v1` exchange will be created
+3. **Setup demo exchange**: `example.books.v1` exchange will be created
     ```bash
     make setup-exchange
-    ```
-
-3. **Publish an event**: The `BookCreatedEvent` will be published on to `example.books.v1` exchange
-    ```bash
-    make publish-event
     ```
 
 4. **Start the receiver**: The receiver will create the `namespace.service.consumers.v1` queue, bind itself to the `BookCreatedEvent`, and start listening to events to process them.
     ```bash
     make start-receiver
     ```
+5. **Publish an event**: The `BookCreatedEvent` will be published on to `example.books.v1` exchange
+    ```bash
+    make publish-event
+    ```
 
-5. **Stop the containers**:
+6. **Stop the containers**:
     ```bash
     docker-compose down
     ```
