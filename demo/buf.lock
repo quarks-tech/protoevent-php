@@ -5,3 +5,4 @@ deps:
     owner: quarks-tech
     repository: protoevent
     commit: ba74e84a919c47ac81966003f4486105
+    digest: shake256:26e851f23a1bfb3233041dae04ee843217c190366c04337045bc1f056bd11d0582c7f0b6469e8de7894491be4bed37c162fad19dbbc4572fea2563303d2fc75e

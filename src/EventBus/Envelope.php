@@ -6,7 +6,8 @@ class Envelope
 {
     private Metadata $metadata;
     private mixed $body;
-    private array $markers = [];
+    private array $markers;
+    private array $headers = [];
 
     public function __construct(Metadata $metadata, mixed $body, array $markers = [])
     {
@@ -40,5 +41,17 @@ class Envelope
     public function getMarker(string $name)
     {
         return $this->markers[$name] ?? '';
+    }
+
+    public function setHeaders(array $headers): self
+    {
+        $this->headers = $headers;
+
+        return $this;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 }

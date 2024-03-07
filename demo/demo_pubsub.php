@@ -10,10 +10,17 @@ use Quarks\EventBus\Dispatcher\Adapter\SymfonyEventDispatcherAdapter;
 use Quarks\EventBus\Dispatcher\Dispatcher;
 use Quarks\EventBus\Publisher;
 use Quarks\EventBus\Receiver;
-use Quarks\EventBus\Transport\ArrayTransport;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-$amqpTransport = new ArrayTransport();
+$config = require 'config.php';
+
+$connection = new \Quarks\EventBus\Transport\AMQPConnection($config['amqp']);
+$amqpTransport = new \Quarks\EventBus\Transport\AMQPTransport($connection, [
+    'queue' => $config['protoevent']['queue'],
+    'setupTopology' => true,
+    'enableDlx' => true,
+]);
+
 $publisher = new Publisher($amqpTransport);
 
 $booksV1Publisher = new BooksV1Publisher($publisher);
@@ -32,11 +39,18 @@ $booksV1Receiver->registerBookCreatedEventHandler(
     new class() implements BookCreatedEventHandlerInterface {
         public function handleBookCreatedEvent(BookCreatedEvent $event)
         {
-            var_dump($event->getId());
+            echo 'Received event: ' . $event->getId() . PHP_EOL;
         }
-    });
+    }
+);
+
+function signalHandler($signal) {
+    echo "Received shutdown signal. Quitting..." . PHP_EOL;
+
+    exit(1);
+}
 
 pcntl_async_signals(true);
-pcntl_signal(SIGINT, [$receiver, 'stop']);
+pcntl_signal(SIGINT, 'signalHandler');
 
 $receiver->run();
