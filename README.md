@@ -44,7 +44,7 @@ Before running any commands, make sure to configure the following variables in t
 
 1. **Start docker containers**: PHP 8.1 with RabbitMQ-management images
     ```bash
-    make up
+    docker-compose up -d
     ```
 
 2. **Setup demo exchange**: `example.books.v1` exchange will be created
@@ -52,14 +52,17 @@ Before running any commands, make sure to configure the following variables in t
     make setup-exchange
     ```
 
-2. **Publish an event**: The `BookCreatedEvent` will be published on to `example.books.v1` exchange
+3. **Publish an event**: The `BookCreatedEvent` will be published on to `example.books.v1` exchange
     ```bash
     make publish-event
     ```
 
-2. **Start the receiver**: The receiver will create the `namespace.service.consumers.v1` queue, bind itself to the `BookCreatedEvent`, and start listening to events to process them.
+4. **Start the receiver**: The receiver will create the `namespace.service.consumers.v1` queue, bind itself to the `BookCreatedEvent`, and start listening to events to process them.
     ```bash
     make start-receiver
     ```
 
-
+5. **Stop the containers**:
+    ```bash
+    docker-compose down
+    ```

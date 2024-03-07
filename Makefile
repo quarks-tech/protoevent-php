@@ -26,10 +26,6 @@ PHONY: generate-protoevents
 generate-protoevents:
 	cd $(DEMO_DIR) && buf generate --include-imports
 
-PHONY: up
-up:
-	docker-compose up -d
-
 PHONY: start-receiver
 start-receiver:
 	docker exec -it $$(docker ps -qf "ancestor=$(PHP_IMAGE)") sh -c 'cd $(WORKDIR)/$(DEMO_DIR) && php demo_receive.php'
@@ -41,10 +37,6 @@ publish-event:
 PHONY: start-pubsub
 start-pubsub:
 	docker exec -it $$(docker ps -qf "ancestor=$(PHP_IMAGE)") sh -c 'cd $(WORKDIR)/$(DEMO_DIR) && php demo_pubsub.php'
-
-PHONY: down
-down:
-	docker-compose down
 
 PHONY: setup-exchange
 setup-exchange:
