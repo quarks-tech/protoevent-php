@@ -50,12 +50,3 @@ down:
 PHONY: setup-exchange
 setup-exchange:
 	curl -i -u $(RABBITMQ_USER):$(RABBITMQ_PASS) -H "Content-Type: application/json" -XPUT http://$(RABBITMQ_ADDR)/api/exchanges/%2F/$(EXCHANGE_NAME) -d'{"type":"direct","durable":true}'
-
-
-
-
-
-
-
-
-
