@@ -2,7 +2,6 @@ DEMO_DIR ?= demo
 BIN_DIR ?= bin
 VAR_DIR ?= var
 
-VHOST = /
 EXCHANGE_NAME = example.books.v1
 RABBITMQ_ADDR = localhost:15672
 RABBITMQ_USER = guest

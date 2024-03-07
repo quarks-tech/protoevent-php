@@ -33,7 +33,6 @@ Before running any commands, make sure to configure the following variables in t
 - **DEMO_DIR**: Directory containing ProtoEvent demo files.
 - **BIN_DIR**: Directory containing compiled binaries.
 - **VAR_DIR**: Directory containing variable files.
-- **VHOST**: RabbitMQ virtual host name.
 - **EXCHANGE_NAME**: RabbitMQ exchange name.
 - **RABBITMQ_ADDR**: RabbitMQ address.
 - **RABBITMQ_USER**: RabbitMQ username.
