@@ -47,7 +47,7 @@ $booksV1Receiver->registerBookCreatedEventHandler(
 function signalHandler($signal) {
     echo "Received shutdown signal. Quitting..." . PHP_EOL;
 
-    exit(1);
+    exit(0);
 }
 
 pcntl_async_signals(true);
