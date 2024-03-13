@@ -1,6 +1,6 @@
 {
   "name": "quarks-tech/protoevent-php",
-  "version": "0.0.10",
+  "version": "dev-PAY-4500",
   "license": "BSD-3-Clause",
   "autoload": {
     "psr-4": {
@@ -30,6 +30,6 @@
     "laminas/laminas-code": "^4.7",
     "phpunit/phpunit": "^9",
     "symfony/event-dispatcher": "^6.4",
-    "quarks-tech/protoevent-amqp-php": "^0.0.8"
+    "quarks-tech/protoevent-amqp-php": "dev-PAY-4500"
   }
 }

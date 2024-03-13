@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6aa5f96dd13c1f92ea5db83cd0e3ae61",
+    "content-hash": "36032b446cb00fdaa7cd62a7a6ab626a",
     "packages": [
         {
             "name": "brick/math",
@@ -2210,22 +2210,22 @@
         },
         {
             "name": "quarks-tech/protoevent-amqp-php",
-            "version": "0.0.8",
+            "version": "dev-PAY-4500",
             "source": {
                 "type": "git",
                 "url": "https://github.com/quarks-tech/protoevent-amqp-php.git",
-                "reference": "c8a8bcee7e8a5e1de44543da39f8a41e32d605a1"
+                "reference": "cabfbd882ce1f963e2554f6476b51c391a888503"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/quarks-tech/protoevent-amqp-php/zipball/c8a8bcee7e8a5e1de44543da39f8a41e32d605a1",
-                "reference": "c8a8bcee7e8a5e1de44543da39f8a41e32d605a1",
+                "url": "https://api.github.com/repos/quarks-tech/protoevent-amqp-php/zipball/cabfbd882ce1f963e2554f6476b51c391a888503",
+                "reference": "cabfbd882ce1f963e2554f6476b51c391a888503",
                 "shasum": ""
             },
             "require": {
                 "ext-amqp": "*",
                 "php": ">=8",
-                "quarks-tech/protoevent-php": "0.0.*"
+                "quarks-tech/protoevent-php": "dev-PAY-4500"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9"
@@ -2243,9 +2243,9 @@
             ],
             "support": {
                 "issues": "https://github.com/quarks-tech/protoevent-amqp-php/issues",
-                "source": "https://github.com/quarks-tech/protoevent-amqp-php/tree/0.0.8"
+                "source": "https://github.com/quarks-tech/protoevent-amqp-php/tree/PAY-4500"
             },
-            "time": "2023-08-10T10:52:56+00:00"
+            "time": "2024-03-07T13:29:46+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -4496,7 +4496,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "quarks-tech/protoevent-amqp-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
