@@ -30,7 +30,6 @@ class Receiver extends BaseReceiver
             $messageReceived = false;
 
             foreach ($this->transport->get() as $message) {
-                echo 'Message received: ' . get_class($message) . PHP_EOL;
                 try {
                     $messageReceived = true;
 
@@ -43,19 +42,16 @@ class Receiver extends BaseReceiver
                         break;
                     }
                 } catch (MessageDecodingFailedException $e) {
-                    echo $e->getMessage() . ' error' . PHP_EOL;
                     $this->logger->error('Unable to decode message from transport', [
-                        'transport' => get_class($this->transport),
+                        'transport' => get_class($this->transport)
                     ]);
 
                     $this->transport->reject($message);
                 } catch (ReceiverException $e) {
-                    echo $e->getMessage() . ' error' . PHP_EOL;
                     $this->logger->error(sprintf("Unable to process event: %s", $e->getMessage()));
 
                     $this->transport->reject($message, true);
                 } catch (\Throwable $throwable) {
-                    echo $e->getMessage() . ' error' . PHP_EOL;
                     $this->logger->error(sprintf("Unable to process event: %s", $throwable->getMessage()));
 
                     $this->transport->reject($message);
@@ -65,7 +61,7 @@ class Receiver extends BaseReceiver
             if (false === $messageReceived) {
                 usleep(self::SLEEP);
             }
-        } while (false === $this->shouldStop);
+        }  while (false === $this->shouldStop);
     }
 
     public function runAndStop(): void

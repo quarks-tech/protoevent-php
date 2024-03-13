@@ -11,6 +11,7 @@
     }
   },
   "require": {
+    "ext-bcmath": "*",
     "ext-pcntl": "*",
     "php": ">=8",
     "ramsey/uuid": "^4.5",
