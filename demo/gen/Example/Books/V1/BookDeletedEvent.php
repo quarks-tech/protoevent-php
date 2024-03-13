@@ -14,7 +14,7 @@ use Google\Protobuf\Internal\GPBUtil;
 class BookDeletedEvent extends \Google\Protobuf\Internal\Message
 {
     /**
-     * Generated from protobuf field <code>int32 id = 1[json_name = "id"];</code>
+     * Generated from protobuf field <code>int32 id = 1 [json_name = "id"];</code>
      */
     protected $id = 0;
 
@@ -33,7 +33,7 @@ class BookDeletedEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 id = 1[json_name = "id"];</code>
+     * Generated from protobuf field <code>int32 id = 1 [json_name = "id"];</code>
      * @return int
      */
     public function getId()
@@ -42,7 +42,7 @@ class BookDeletedEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>int32 id = 1[json_name = "id"];</code>
+     * Generated from protobuf field <code>int32 id = 1 [json_name = "id"];</code>
      * @param int $var
      * @return $this
      */

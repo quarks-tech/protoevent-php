@@ -29,12 +29,6 @@ class BlockingReceiver extends BaseReceiver
             try {
                 $this->dispatchEvent($message);
                 $this->transport->ack($message);
-
-                if ($this->shouldStop) {
-                    $this->logger->info("Stopping receiver...");
-
-                    return;
-                }
             } catch (MessageDecodingFailedException) {
                 $this->logger->error('Unable to decode message from transport', [
                     'transport' => get_class($this->transport)
@@ -60,6 +54,11 @@ class BlockingReceiver extends BaseReceiver
         }
 
         $this->registeredEvents[$eventDescriptor->getFullName()] = $eventDescriptor->getClass();
+    }
+
+    public function stop(): void
+    {
+        $this->logger->warning('Cannot interrupt consuming events in blocking receiver');
     }
 
     private function setupTransport(): void

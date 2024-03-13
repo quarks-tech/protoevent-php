@@ -10,6 +10,7 @@ PHONY: run-test-generator
 run-test-generator:
 	cat < ./var/code_generator_request.pb.bin | ./bin/protoc-gen-php-eventbus
 
-PHONY: proto-cloudevents
-proto-cloudevents:
-	protoc --php_out=src/EventBus resources/cloundevents.proto
+PHONY: generate-protoevents
+generate-protoevents:
+	cd demo && buf generate --include-imports
+
