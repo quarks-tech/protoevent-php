@@ -59,6 +59,8 @@ abstract class BaseReceiver
         try {
             $eventName = $envelope->getMetadata()->getType();
 
+            echo 'Dispatch: ' . $eventName . PHP_EOL;
+
             // dispatch only events we subscribed
             if (empty($eventClass = $this->registeredEvents[$eventName] ?? null)) {
                 $this->logger->warning(sprintf('Such event is not registered, skipping. Event name: %s', $eventName));
@@ -85,6 +87,8 @@ abstract class BaseReceiver
 
             $this->dispatcher->dispatch($event, $eventName);
         } catch (\Throwable $throwable) {
+            echo 'Receiver exception: ' . $throwable->getMessage() . PHP_EOL;
+
             throw new ReceiverException(
                 sprintf(
                     'Unable to receive %s with body %s: %s', $eventName, $envelope->getBody(), $throwable->getMessage()
