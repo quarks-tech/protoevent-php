@@ -1,12 +1,13 @@
 {
   "name": "quarks-tech/protoevent-php",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "license": "BSD-3-Clause",
   "autoload": {
     "psr-4": {
       "Quarks\\": "src/",
       "Quarks\\Tests\\": "tests/",
-      "Example\\": "demo/gen/Example"
+      "Example\\": "demo/gen/Example",
+      "GPBMetadata\\": "demo/gen/GPBMetadata"
     }
   },
   "require": {
@@ -26,6 +27,7 @@
     "symfony/finder": "^6.1",
     "seld/phar-utils": "^1.2",
     "laminas/laminas-code": "^4.7",
-    "phpunit/phpunit": "^9"
+    "phpunit/phpunit": "^9",
+    "symfony/event-dispatcher": "^7.0"
   }
 }
