@@ -1,34 +1,55 @@
 {
-  "name": "quarks-tech/protoevent-php",
-  "version": "0.1.0",
-  "license": "BSD-3-Clause",
-  "autoload": {
-    "psr-4": {
-      "Quarks\\": "src/",
-      "Quarks\\Tests\\": "tests/",
-      "Example\\": "demo/gen/Example",
-      "GPBMetadata\\": "demo/gen/GPBMetadata"
-    }
-  },
-  "require": {
-    "ext-bcmath": "*",
-    "ext-pcntl": "*",
-    "php": ">=8",
-    "ramsey/uuid": "^4.5",
-    "google/protobuf": "^3.21",
-    "psr/log": "^1|^2|^3",
-    "protobuf-php/google-protobuf-proto": "^0.1.3",
-    "protobuf-php/protobuf": "^0.1.3"
-  },
-  "suggest": {
-    "symfony/event-dispatcher-contracts": "*"
-  },
-  "require-dev": {
-    "vimeo/psalm": "^4.27",
-    "symfony/finder": "^6.1",
-    "seld/phar-utils": "^1.2",
-    "laminas/laminas-code": "^4.7",
-    "phpunit/phpunit": "^9",
-    "symfony/event-dispatcher": "^7.0"
-  }
+    "name": "quarks-tech/protoevent-php",
+    "description": "PHP implementation for ProtoEvent with CloudEvents and AMQP support",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["amqp", "rabbitmq", "events", "cloudevents", "protobuf", "event-bus", "symfony"],
+    "authors": [
+        {
+            "name": "Quarks Tech",
+            "email": "info@quarks.tech"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "ext-amqp": "*",
+        "google/protobuf": "^3.25|^4.0",
+        "ramsey/uuid": "^4.7",
+        "psr/log": "^2.0|^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5|^11.0",
+        "vimeo/psalm": "^5.0|^6.0",
+        "friendsofphp/php-cs-fixer": "^3.50",
+        "symfony/config": "^5.4|^6.4|^7.0",
+        "symfony/dependency-injection": "^5.4|^6.4|^7.0",
+        "symfony/console": "^5.4|^6.4|^7.0",
+        "symfony/http-kernel": "^5.4|^6.4|^7.0"
+    },
+    "suggest": {
+        "symfony/config": "Required for Symfony bundle integration",
+        "symfony/dependency-injection": "Required for Symfony bundle integration",
+        "symfony/console": "Required for Symfony console commands",
+        "symfony/http-kernel": "Required for Symfony bundle integration"
+    },
+    "autoload": {
+        "psr-4": {
+            "QuarksTech\\ProtoEvent\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "QuarksTech\\ProtoEvent\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "psalm": "vendor/bin/psalm",
+        "cs-fix": "vendor/bin/php-cs-fixer fix"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
