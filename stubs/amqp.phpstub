@@ -1,0 +1,110 @@
+<?php
+
+/**
+ * Stub file for ext-amqp classes used in the project.
+ * @see https://github.com/php-amqp/php-amqp
+ */
+
+class AMQPConnection
+{
+    public function __construct(array $credentials = []) {}
+    public function connect(): bool {}
+    public function disconnect(): bool {}
+    public function isConnected(): bool {}
+    public function isPersistent(): bool {}
+    public function getLogin(): string {}
+    public function getPassword(): string {}
+    public function getHost(): string {}
+    public function getPort(): int {}
+    public function getVhost(): string {}
+}
+
+class AMQPChannel
+{
+    public function __construct(AMQPConnection $connection) {}
+    public function isConnected(): bool {}
+    public function setPrefetchCount(int $count): bool {}
+    public function setPrefetchSize(int $size): bool {}
+}
+
+class AMQPExchange
+{
+    public function __construct(AMQPChannel $channel) {}
+    public function setName(string $name): void {}
+    public function getName(): string {}
+    public function setType(string $type): void {}
+    public function getType(): string {}
+    public function setFlags(int $flags): void {}
+    public function getFlags(): int {}
+    public function setArgument(string $key, mixed $value): void {}
+    public function setArguments(array $arguments): void {}
+    public function declareExchange(): bool {}
+    public function delete(string $name = null, int $flags = AMQP_NOPARAM): bool {}
+    public function publish(string $message, string $routingKey = null, int $flags = AMQP_NOPARAM, array $attributes = []): bool {}
+}
+
+class AMQPQueue
+{
+    public function __construct(AMQPChannel $channel) {}
+    public function setName(string $name): void {}
+    public function getName(): string {}
+    public function setFlags(int $flags): void {}
+    public function getFlags(): int {}
+    public function setArgument(string $key, mixed $value): void {}
+    public function setArguments(array $arguments): void {}
+    public function declareQueue(): int {}
+    public function delete(int $flags = AMQP_NOPARAM): int {}
+    public function bind(string $exchangeName, string $routingKey = null, array $arguments = []): bool {}
+    public function unbind(string $exchangeName, string $routingKey = null, array $arguments = []): bool {}
+    public function consume(callable $callback = null, int $flags = AMQP_NOPARAM, string $consumerTag = null): void {}
+    public function ack(int $deliveryTag, int $flags = AMQP_NOPARAM): bool {}
+    public function nack(int $deliveryTag, int $flags = AMQP_NOPARAM): bool {}
+    public function reject(int $deliveryTag, int $flags = AMQP_NOPARAM): bool {}
+    public function cancel(string $consumerTag = ''): bool {}
+    public function get(int $flags = AMQP_NOPARAM): ?AMQPEnvelope {}
+}
+
+class AMQPEnvelope
+{
+    public function getBody(): string {}
+    public function getRoutingKey(): string {}
+    public function getDeliveryTag(): int {}
+    public function getDeliveryMode(): int {}
+    public function getExchangeName(): string {}
+    public function isRedelivery(): bool {}
+    public function getContentType(): string {}
+    public function getContentEncoding(): string {}
+    public function getType(): string {}
+    public function getTimestamp(): int {}
+    public function getPriority(): int {}
+    public function getExpiration(): string {}
+    public function getUserId(): string {}
+    public function getAppId(): ?string {}
+    public function getMessageId(): string {}
+    public function getReplyTo(): string {}
+    public function getCorrelationId(): string {}
+    /** @return array<string, mixed>|null */
+    public function getHeaders(): ?array {}
+    public function getHeader(string $name): mixed {}
+}
+
+const AMQP_NOPARAM = 0;
+const AMQP_DURABLE = 2;
+const AMQP_PASSIVE = 4;
+const AMQP_EXCLUSIVE = 8;
+const AMQP_AUTODELETE = 16;
+const AMQP_INTERNAL = 32;
+const AMQP_NOLOCAL = 64;
+const AMQP_AUTOACK = 128;
+const AMQP_IFEMPTY = 256;
+const AMQP_IFUNUSED = 512;
+const AMQP_MANDATORY = 1024;
+const AMQP_IMMEDIATE = 2048;
+const AMQP_MULTIPLE = 4096;
+const AMQP_NOWAIT = 8192;
+const AMQP_REQUEUE = 16384;
+
+const AMQP_EX_TYPE_DIRECT = 'direct';
+const AMQP_EX_TYPE_FANOUT = 'fanout';
+const AMQP_EX_TYPE_TOPIC = 'topic';
+const AMQP_EX_TYPE_HEADERS = 'headers';
