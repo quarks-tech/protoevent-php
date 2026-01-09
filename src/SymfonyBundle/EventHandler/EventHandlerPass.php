@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace QuarksTech\ProtoEvent\SymfonyBundle\EventHandler;
 
 use QuarksTech\ProtoEvent\EventBus\EventHandler;
+use QuarksTech\ProtoEvent\EventBus\ServiceDesc;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -163,7 +164,7 @@ class EventHandlerPass implements CompilerPassInterface
         $serviceId = 'protoevent.service_desc.' . md5($serviceDescClass);
 
         if (!$container->hasDefinition($serviceId)) {
-            $container->register($serviceId)
+            $container->register($serviceId, ServiceDesc::class)
                 ->setFactory([$serviceDescClass, 'get'])
                 ->setPublic(false);
         }
