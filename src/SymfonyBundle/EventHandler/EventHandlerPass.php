@@ -12,17 +12,17 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Compiler pass that auto-discovers event handlers.
+ * Compiler pass that registers tagged event handlers to queue-specific subscribers.
  *
- * Any class implementing a generated handler interface is automatically registered:
+ * Services tagged with 'protoevent.handler' are automatically registered.
+ * Use the 'queue' attribute to bind a handler to a specific queue:
  *
- *     class SubscriptionCreatedHandler implements SubscriptionCreatedEventHandler
- *     {
- *         public function handleSubscriptionCreatedEvent(EventContext $ctx, SubscriptionCreatedEvent $event): void
- *         {
- *             // ...
- *         }
- *     }
+ *     services:
+ *         App\Handler\MyEventHandler:
+ *             tags:
+ *                 - { name: 'protoevent.handler', queue: 'my-queue' }
+ *
+ * Handlers without a queue attribute are registered to all configured queues.
  *
  * The ServiceDesc and event name are derived from the interface naming convention:
  *   - Interface: {Namespace}\EventBus\Handler\{EventName}EventHandler
@@ -31,33 +31,69 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class EventHandlerPass implements CompilerPassInterface
 {
+    public const TAG_NAME = 'protoevent.handler';
+
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition('quarks_tech.proto_event.subscriber')) {
-            return;
+        /** @var string[] $queueNames */
+        $queueNames = $container->getParameter('protoevent.queue_names');
+
+        // Group handlers by queue
+        /** @var array<string, array{serviceId: string, reflection: \ReflectionClass}[]> $handlersByQueue */
+        $handlersByQueue = [];
+
+        foreach ($container->findTaggedServiceIds(self::TAG_NAME) as $serviceId => $tags) {
+            $definition = $container->getDefinition($serviceId);
+            $class = $definition->getClass();
+
+            if ($class === null) {
+                continue;
+            }
+
+            $reflection = $container->getReflectionClass($class);
+            if ($reflection === null) {
+                continue;
+            }
+
+            // Collect queue names from all tags on this service
+            $queues = [];
+            foreach ($tags as $tag) {
+                if (isset($tag['queue'])) {
+                    $queues[] = $tag['queue'];
+                }
+            }
+
+            // If no queue specified, register to all queues
+            if (empty($queues)) {
+                $queues = $queueNames;
+            }
+
+            foreach ($queues as $queue) {
+                $handlersByQueue[$queue][] = [
+                    'serviceId' => $serviceId,
+                    'reflection' => $reflection,
+                ];
+            }
         }
 
-        $subscriberDefinition = $container->getDefinition('quarks_tech.proto_event.subscriber');
+        // Create a subscriber for each queue with its handlers
+        foreach ($queueNames as $queueName) {
+            $subscriberId = "protoevent.{$queueName}.subscriber";
 
-        foreach ($container->getDefinitions() as $serviceId => $definition) {
-            $class = $definition->getClass();
-            if ($class === null || !class_exists($class)) {
+            if (!$container->hasDefinition($subscriberId)) {
                 continue;
             }
 
-            // Skip internal services
-            if (str_starts_with($serviceId, 'quarks_tech.proto_event.')) {
-                continue;
+            $subscriberDefinition = $container->getDefinition($subscriberId);
+
+            foreach ($handlersByQueue[$queueName] ?? [] as $handler) {
+                $this->registerHandler(
+                    $container,
+                    $subscriberDefinition,
+                    $handler['serviceId'],
+                    $handler['reflection'],
+                );
             }
-
-            $reflection = new ReflectionClass($class);
-
-            // Check if class implements EventHandler
-            if (!$reflection->implementsInterface(EventHandler::class)) {
-                continue;
-            }
-
-            $this->registerHandler($container, $subscriberDefinition, $serviceId, $reflection);
         }
     }
 
@@ -124,7 +160,7 @@ class EventHandlerPass implements CompilerPassInterface
 
     private function createServiceDescReference(ContainerBuilder $container, string $serviceDescClass): Reference
     {
-        $serviceId = 'quarks_tech.proto_event.service_desc.' . md5($serviceDescClass);
+        $serviceId = 'protoevent.service_desc.' . md5($serviceDescClass);
 
         if (!$container->hasDefinition($serviceId)) {
             $container->register($serviceId)

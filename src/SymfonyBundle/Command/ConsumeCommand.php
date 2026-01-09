@@ -44,9 +44,12 @@ The <info>%command.name%</info> command consumes events from a specified queue.
   <info>php %command.full_name% monolith.v2.subscriptions</info>
   <info>php %command.full_name% notifications</info>
 
-All registered event handlers are available. Events are routed to the
-correct handler based on event type. Each queue can run independently
-in a separate Kubernetes pod.
+Only handlers tagged for the specified queue are registered. Tag handlers with:
+
+  tags:
+    - { name: 'protoevent.handler', queue: 'my-queue' }
+
+Handlers without a queue attribute are registered to all queues.
 HELP,
             );
     }
@@ -66,9 +69,9 @@ HELP,
         }
 
         /** @var Subscriber $subscriber */
-        $subscriber = $this->container->get('quarks_tech.proto_event.subscriber');
+        $subscriber = $this->container->get("protoevent.{$queueName}.subscriber");
         /** @var ReceiverInterface $receiver */
-        $receiver = $this->container->get("quarks_tech.proto_event.queue.{$queueName}.receiver");
+        $receiver = $this->container->get("protoevent.{$queueName}.receiver");
 
         $io->info(sprintf('Starting consumer for queue "%s"...', $queueName));
 
