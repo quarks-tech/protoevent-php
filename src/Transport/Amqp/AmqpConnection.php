@@ -20,8 +20,9 @@ final class AmqpConnection
         string $password = 'guest',
         string $vhost = '/',
         int $connectionTimeout = 10,
-        int $readTimeout = 10,
+        int $readTimeout = 0,
         int $writeTimeout = 10,
+        int $heartbeat = 60,
     ) {
         $this->connection = new \AMQPConnection([
             'host' => $host,
@@ -32,6 +33,7 @@ final class AmqpConnection
             'connect_timeout' => $connectionTimeout,
             'read_timeout' => $readTimeout,
             'write_timeout' => $writeTimeout,
+            'heartbeat' => $heartbeat,
         ]);
     }
 
