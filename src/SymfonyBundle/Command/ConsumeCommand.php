@@ -17,7 +17,6 @@ use Throwable;
 class ConsumeCommand extends Command
 {
     protected static $defaultName = 'protoevent:consume';
-    protected static $defaultDescription = 'Consume events from a queue';
 
     private ContainerInterface $container;
     /** @var string[] */
@@ -36,6 +35,7 @@ class ConsumeCommand extends Command
     protected function configure(): void
     {
         $this
+            ->setDescription('Consume events from a queue')
             ->addArgument('queue', InputArgument::REQUIRED, 'Queue name to consume from')
             ->setHelp(
                 <<<'HELP'
@@ -65,7 +65,7 @@ HELP,
                 $queueName,
                 implode(', ', $this->queueNames),
             ));
-            return Command::FAILURE;
+            return 1;
         }
 
         /** @var Subscriber $subscriber */
@@ -79,7 +79,7 @@ HELP,
 
         if (empty($serviceInfos)) {
             $io->warning('No event handlers registered. Nothing to consume.');
-            return Command::SUCCESS;
+            return 0;
         }
 
         $io->writeln('Registered handlers:');
@@ -97,11 +97,11 @@ HELP,
             $subscriber->subscribe($receiver);
         } catch (Throwable $e) {
             $io->error('Consumer error: ' . $e->getMessage());
-            return Command::FAILURE;
+            return 1;
         }
 
         $io->note('Consumer stopped gracefully.');
 
-        return Command::SUCCESS;
+        return 0;
     }
 }
