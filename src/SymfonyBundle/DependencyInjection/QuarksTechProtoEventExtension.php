@@ -79,8 +79,9 @@ class QuarksTechProtoEventExtension extends Extension
             ]);
         }
 
+        $definition->setPublic(true);
         $container->setDefinition('protoevent.connection', $definition);
-        $container->setAlias(AmqpConnection::class, 'protoevent.connection');
+        $container->setAlias(AmqpConnection::class, 'protoevent.connection')->setPublic(true);
     }
 
     /**

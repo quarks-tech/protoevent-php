@@ -74,6 +74,16 @@ final class AmqpConnection
         }
     }
 
+    public function getVhost(): string
+    {
+        return $this->connection->getVhost();
+    }
+
+    public function getHost(): string
+    {
+        return $this->connection->getHost();
+    }
+
     public function disconnect(): void
     {
         if ($this->connection->isConnected()) {

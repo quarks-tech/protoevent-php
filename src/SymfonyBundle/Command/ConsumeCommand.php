@@ -7,6 +7,7 @@ namespace QuarksTech\ProtoEvent\SymfonyBundle\Command;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use QuarksTech\ProtoEvent\EventBus\Subscriber;
+use QuarksTech\ProtoEvent\Transport\Amqp\AmqpConnection;
 use QuarksTech\ProtoEvent\Transport\ReceiverInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -80,7 +81,14 @@ HELP,
         /** @var ReceiverInterface $receiver */
         $receiver = $this->container->get("protoevent.{$queueName}.receiver");
 
-        $this->logger->info('Starting consumer for queue "{queue}"', ['queue' => $queueName]);
+        /** @var AmqpConnection $connection */
+        $connection = $this->container->get('protoevent.connection');
+
+        $this->logger->info('Starting consumer for queue "{queue}" on vhost "{vhost}" at "{host}"', [
+            'queue' => $queueName,
+            'vhost' => $connection->getVhost(),
+            'host' => $connection->getHost(),
+        ]);
 
         $serviceInfos = $subscriber->getServiceInfos();
 

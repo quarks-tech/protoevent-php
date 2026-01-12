@@ -87,6 +87,9 @@ final class ParkingLotReceiver implements ReceiverInterface, SetuperInterface
         $this->queueName = $this->options->getQueueName();
         $this->dlxExchangeName = $this->queueName . self::DLX_SUFFIX;
 
+        // Always set the queue name (required for consume)
+        $this->queue->setName($this->queueName);
+
         if ($this->options->shouldSetupTopology()) {
             $this->setupTopology();
         }

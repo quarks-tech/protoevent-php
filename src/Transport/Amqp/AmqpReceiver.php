@@ -69,6 +69,9 @@ final class AmqpReceiver implements ReceiverInterface, SetuperInterface
         $this->consumerTag = $consumerName . '-' . Uuid::uuid4()->toString();
         $this->queueName = $this->options->getQueueName() ?? $consumerName;
 
+        // Always set the queue name (required for consume)
+        $this->queue->setName($this->queueName);
+
         if ($this->options->shouldSetupTopology()) {
             $this->setupTopology();
         }
