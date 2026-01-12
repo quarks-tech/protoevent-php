@@ -32,8 +32,8 @@ use Throwable;
 final class AmqpReceiver implements ReceiverInterface, SetuperInterface
 {
     private AmqpConnection $connection;
-    private AMQPChannel $channel;
-    private AMQPQueue $queue;
+    private ?AMQPChannel $channel = null;
+    private ?AMQPQueue $queue = null;
     private MarshalerInterface $marshaler;
     private LoggerInterface $logger;
     private AmqpReceiverOptions $options;
@@ -51,14 +51,21 @@ final class AmqpReceiver implements ReceiverInterface, SetuperInterface
         ?GracefulShutdownInterface $gracefulShutdown = null,
     ) {
         $this->connection = $connection;
-        $this->connection->connect();
-
-        $this->channel = new AMQPChannel($this->connection->getConnection());
-        $this->queue = new AMQPQueue($this->channel);
         $this->options = $options ?? new AmqpReceiverOptions();
         $this->marshaler = $marshaler ?? new Marshaler();
         $this->logger = $logger ?? new NullLogger();
         $this->gracefulShutdown = $gracefulShutdown ?? new PcntlGracefulShutdown($this->logger);
+    }
+
+    private function ensureConnected(): void
+    {
+        if ($this->channel !== null) {
+            return;
+        }
+
+        $this->connection->connect();
+        $this->channel = new AMQPChannel($this->connection->getConnection());
+        $this->queue = new AMQPQueue($this->channel);
     }
 
     /**
@@ -66,6 +73,8 @@ final class AmqpReceiver implements ReceiverInterface, SetuperInterface
      */
     public function setup(string $consumerName, array $serviceInfos): void
     {
+        $this->ensureConnected();
+
         $this->consumerTag = $consumerName . '-' . Uuid::uuid4()->toString();
         $this->queueName = $this->options->getQueueName() ?? $consumerName;
 

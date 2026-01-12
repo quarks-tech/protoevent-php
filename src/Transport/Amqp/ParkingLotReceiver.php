@@ -46,9 +46,9 @@ final class ParkingLotReceiver implements ReceiverInterface, SetuperInterface
     private const ROUTING_KEY_PARKING_LOT = 'parkingLot';
 
     private AmqpConnection $connection;
-    private AMQPChannel $channel;
-    private AMQPQueue $queue;
-    private AMQPExchange $dlxExchange;
+    private ?AMQPChannel $channel = null;
+    private ?AMQPQueue $queue = null;
+    private ?AMQPExchange $dlxExchange = null;
     private MarshalerInterface $marshaler;
     private LoggerInterface $logger;
     private ParkingLotReceiverOptions $options;
@@ -67,15 +67,22 @@ final class ParkingLotReceiver implements ReceiverInterface, SetuperInterface
         ?GracefulShutdownInterface $gracefulShutdown = null,
     ) {
         $this->connection = $connection;
-        $this->connection->connect();
-
-        $this->channel = new AMQPChannel($this->connection->getConnection());
-        $this->queue = new AMQPQueue($this->channel);
-        $this->dlxExchange = new AMQPExchange($this->channel);
         $this->options = $options;
         $this->marshaler = $marshaler ?? new Marshaler();
         $this->logger = $logger ?? new NullLogger();
         $this->gracefulShutdown = $gracefulShutdown ?? new PcntlGracefulShutdown($this->logger);
+    }
+
+    private function ensureConnected(): void
+    {
+        if ($this->channel !== null) {
+            return;
+        }
+
+        $this->connection->connect();
+        $this->channel = new AMQPChannel($this->connection->getConnection());
+        $this->queue = new AMQPQueue($this->channel);
+        $this->dlxExchange = new AMQPExchange($this->channel);
     }
 
     /**
@@ -83,6 +90,8 @@ final class ParkingLotReceiver implements ReceiverInterface, SetuperInterface
      */
     public function setup(string $consumerName, array $serviceInfos): void
     {
+        $this->ensureConnected();
+
         $this->consumerTag = $consumerName . '-' . Uuid::uuid4()->toString();
         $this->queueName = $this->options->getQueueName();
         $this->dlxExchangeName = $this->queueName . self::DLX_SUFFIX;
