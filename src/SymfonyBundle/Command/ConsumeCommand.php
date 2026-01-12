@@ -73,7 +73,7 @@ HELP,
         /** @var ReceiverInterface $receiver */
         $receiver = $this->container->get("protoevent.{$queueName}.receiver");
 
-        $io->info(sprintf('Starting consumer for queue "%s"...', $queueName));
+        $io->note(sprintf('Starting consumer for queue "%s"...', $queueName));
 
         $serviceInfos = $subscriber->getServiceInfos();
 
@@ -100,7 +100,7 @@ HELP,
             return Command::FAILURE;
         }
 
-        $io->info('Consumer stopped gracefully.');
+        $io->note('Consumer stopped gracefully.');
 
         return Command::SUCCESS;
     }
