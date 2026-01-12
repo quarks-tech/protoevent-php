@@ -4,31 +4,40 @@ declare(strict_types=1);
 
 namespace QuarksTech\ProtoEvent\SymfonyBundle\Command;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use QuarksTech\ProtoEvent\EventBus\Subscriber;
 use QuarksTech\ProtoEvent\Transport\ReceiverInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Throwable;
+
+/**
+ * Command to consume events from a ProtoEvent queue.
+ *
+ * Usage: bin/console protoevent:consume <queue-name>
+ */
 
 class ConsumeCommand extends Command
 {
     protected static $defaultName = 'protoevent:consume';
 
     private ContainerInterface $container;
+    private LoggerInterface $logger;
     /** @var string[] */
     private array $queueNames;
 
     /**
      * @param string[] $queueNames
      */
-    public function __construct(ContainerInterface $container, array $queueNames)
+    public function __construct(ContainerInterface $container, array $queueNames, ?LoggerInterface $logger = null)
     {
         $this->container = $container;
         $this->queueNames = $queueNames;
+        $this->logger = $logger ?? new NullLogger();
         parent::__construct();
     }
 
@@ -56,15 +65,13 @@ HELP,
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $queueName = $input->getArgument('queue');
 
         if (!in_array($queueName, $this->queueNames, true)) {
-            $io->error(sprintf(
-                'Unknown queue "%s". Available queues: %s',
-                $queueName,
-                implode(', ', $this->queueNames),
-            ));
+            $this->logger->error('Unknown queue "{queue}". Available queues: {available}', [
+                'queue' => $queueName,
+                'available' => implode(', ', $this->queueNames),
+            ]);
             return 1;
         }
 
@@ -73,34 +80,37 @@ HELP,
         /** @var ReceiverInterface $receiver */
         $receiver = $this->container->get("protoevent.{$queueName}.receiver");
 
-        $io->note(sprintf('Starting consumer for queue "%s"...', $queueName));
+        $this->logger->info('Starting consumer for queue "{queue}"', ['queue' => $queueName]);
 
         $serviceInfos = $subscriber->getServiceInfos();
 
         if (empty($serviceInfos)) {
-            $io->warning('No event handlers registered. Nothing to consume.');
+            $this->logger->warning('No event handlers registered for queue "{queue}". Nothing to consume.', [
+                'queue' => $queueName,
+            ]);
             return 0;
         }
 
-        $io->writeln('Registered handlers:');
         foreach ($serviceInfos as $serviceInfo) {
-            $io->writeln(sprintf(
-                '  %s: %s',
-                $serviceInfo->getServiceName(),
-                implode(', ', $serviceInfo->getEvents()),
-            ));
+            $this->logger->info('Registered handler: {service} for events: {events}', [
+                'service' => $serviceInfo->getServiceName(),
+                'events' => implode(', ', $serviceInfo->getEvents()),
+            ]);
         }
 
-        $io->success('Consumer started. Press Ctrl+C to stop.');
+        $this->logger->info('Consumer started for queue "{queue}"', ['queue' => $queueName]);
 
         try {
             $subscriber->subscribe($receiver);
         } catch (Throwable $e) {
-            $io->error('Consumer error: ' . $e->getMessage());
+            $this->logger->error('Consumer error: {message}', [
+                'message' => $e->getMessage(),
+                'exception' => $e,
+            ]);
             return 1;
         }
 
-        $io->note('Consumer stopped gracefully.');
+        $this->logger->info('Consumer stopped gracefully');
 
         return 0;
     }

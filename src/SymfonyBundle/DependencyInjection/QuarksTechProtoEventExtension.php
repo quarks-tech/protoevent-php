@@ -175,6 +175,7 @@ class QuarksTechProtoEventExtension extends Extension
         $commandDef->setArguments([
             new Reference('service_container'),
             $queueNames,
+            new Reference('logger', ContainerBuilder::NULL_ON_INVALID_REFERENCE),
         ]);
         $commandDef->addTag('console.command');
         $container->setDefinition('protoevent.command.consume', $commandDef);
