@@ -55,7 +55,7 @@ final class StructuredMarshaler implements MarshalerInterface
         }
 
         try {
-            $body = json_encode($event, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT);
+            $body = json_encode($event, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             throw new UnprocessableEventException('Failed to encode CloudEvents JSON: ' . $e->getMessage(), previous: $e);
         }
@@ -124,7 +124,7 @@ final class StructuredMarshaler implements MarshalerInterface
         // Extract data
         if (isset($event['data'])) {
             try {
-                $data = json_encode($event['data'], JSON_THROW_ON_ERROR);
+                $data = json_encode($event['data'], JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT);
             } catch (JsonException $e) {
                 throw new UnprocessableEventException('Failed to encode data: ' . $e->getMessage(), previous: $e);
             }
