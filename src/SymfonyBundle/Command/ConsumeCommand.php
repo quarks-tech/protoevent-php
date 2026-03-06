@@ -39,7 +39,7 @@ class ConsumeCommand extends Command
         $this->container = $container;
         $this->queueNames = $queueNames;
         $this->logger = $logger ?? new NullLogger();
-        parent::__construct();
+        parent::__construct(static::$defaultName);
     }
 
     protected function configure(): void
